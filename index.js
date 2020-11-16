@@ -73,9 +73,6 @@ function displayResults(responseJson) {
         }
       }
     }
-    
-    
-
     $('#results-list').append(`
       <li>
         <a href="${resultsArray[i].url}" target="_blank">${resultsArray[i].fullName}</a>
@@ -164,7 +161,7 @@ can be resubmited to the National Weather Service to receive the forecast */
 function getNWSgridpoints(latitude, longitude) {
   var myHeaders = new Headers();
   myHeaders.append("Accept", "application/geo+json");
-  myHeaders.append("User-Agent", userAgent);
+//  myHeaders.append("User-Agent", userAgent);
 
   var requestOptions = {
     method: 'GET',
@@ -191,7 +188,7 @@ function getNWSgridpoints(latitude, longitude) {
 function getForecast(responseJson) {
   var myHeaders = new Headers();
   myHeaders.append("Accept", "application/geo+json");
-  myHeaders.append("User-Agent", userAgent);
+//  myHeaders.append("User-Agent", userAgent);
 
   var requestOptions = {
     method: 'GET',
@@ -228,7 +225,6 @@ function getForecast(responseJson) {
       $('#js-error-message').text(`Something went wrong: ${err.message}`);
     });
 }
-
 
 /***************************************************************
 event handling functions: watching for buttons clicked/submitted 

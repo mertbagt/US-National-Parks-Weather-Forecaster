@@ -10,6 +10,7 @@ var resultsArray = [];
 var periodsArray = [];
 var alertArray = [];
 var chosenPark = 0;
+var chosenParkName = '';
 var lat = 0;
 var long = 0;
 var forecast = '';
@@ -32,7 +33,7 @@ display functions
 
 function displayResults(responseJson) {
   resultsArray = responseJson.data;
-//  console.log(resultsArray);
+
   $('#results-list').empty();
   let currentAddress = '';
   
@@ -47,7 +48,6 @@ function displayResults(responseJson) {
 
   for (let i = 0; i < resultsArray.length; i++){
     for (let j = 0; j < resultsArray[i].addresses.length; j++) {
-//      console.log('Initial J value ' + j);
       if (resultsArray[i].addresses[j].type == 'Physical') {
         if (resultsArray[i].addresses[j].line2 === "") {
           currentAddress = `
@@ -56,7 +56,7 @@ function displayResults(responseJson) {
               ${resultsArray[i].addresses[j].city}&#44;&nbsp;${resultsArray[i].addresses[j].stateCode}&nbsp;${responseJson.data[i].addresses[j].postalCode}
             </p>
             <form id="result-form">
-              <button type="button" id="${i}" class="btn-click-action" value="btn${i}">Test!</button>
+              <button type="button" id="${i}" class="btn-click-action" value="btn${i}">Get Forecast</button>
             </form>
           `;
         } else {
@@ -67,21 +67,11 @@ function displayResults(responseJson) {
             ${resultsArray[i].addresses[j].city}&#44;&nbsp;${resultsArray[i].addresses[j].stateCode}&nbsp;${responseJson.data[i].addresses[j].postalCode}
           </p>
           <form id="result-form">
-              <button type="button" id="${i}" class="btn-click-action" value="btn${i}">Test!</button>
+              <button type="button" id="${i}" class="btn-click-action" value="btn${i}">Get Forecast</button>
           </form>
         `;
-//        console.log('Address check returns physical')
-//        console.log(responseJson.data[i].addresses[j].line2);
-//        console.log('Final J value ' + j);
         }
-      } else {
-        currentAddress = currentAddress;
-//        console.log('Address check returns not physical')
-//        console.log(responseJson.data[i].addresses[j].line2);
-//        console.log('Final J value ' + j);
       }
-
-//      console.log(responseJson.data[i].addresses[j].type);
     }
     
     
@@ -183,6 +173,7 @@ function getNWSgridpoints(latitude, longitude) {
   };
   
   const url = nwsURL + latitude + "%2C" + longitude;
+  console.log(url);
 
   fetch(url, requestOptions)
     .then(response => {
@@ -257,19 +248,29 @@ function watchForm() {
 
 function watchResults() {
   $('#results-list').on("click", ".btn-click-action", function(event) {
+    $('#forecast-list').empty();
+    $('#alert-list').empty();
+    $('#js-error-message').empty();
+
     chosenPark = this.id;
+    chosenParkName = resultsArray[chosenPark].addresses[0].line1;
     lat = resultsArray[chosenPark].latitude;
     long = resultsArray[chosenPark].longitude;
 
     console.log('Chosen element: ' + chosenPark);
+    console.log(chosenParkName);
     console.log(resultsArray[chosenPark]);
     console.log('Latitude: ' + lat);
     console.log('Longitude: ' + long);
+
+// <h2 class="forecast-name">Forecast for ${chosenParkName}</h2>
+
+    $("h3.forecast-name").replaceWith(`
+      <h3 class="forecast-name">${chosenParkName}</h3>
+    `);
+
     $('#results').addClass('hidden');
     $('#forecast').removeClass('hidden');
-    $('#forecast-list').empty();
-    $('#alert-list').empty();
-    $('#js-error-message').empty();
     getNWSgridpoints(lat, long);
   }); 
 }

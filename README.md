@@ -1,3 +1,4 @@
 # US National Parks Weather Forecaster
 
-https://mertbagt.github.io/nps-api-search/
+https://mertbagt.github.io/US-National-Parks-Weather-Forecaster/
+

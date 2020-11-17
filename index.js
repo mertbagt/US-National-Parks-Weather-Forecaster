@@ -67,14 +67,14 @@ function displayResults(responseJson) {
             ${resultsArray[i].addresses[j].city}&#44;&nbsp;${resultsArray[i].addresses[j].stateCode}&nbsp;${responseJson.data[i].addresses[j].postalCode}
           </p>
           <form id="result-form">
-              <button type="button" id="${i}" class="btn-click-action" value="btn${i}">Get Forecast</button>
+              <button type="button" id="${i}" class="btn-click-action button" value="btn${i}">Get Forecast</button>
           </form>
         `;
         }
       }
     }
     $('#results-list').append(`
-      <li style="background-color: #DFD2B9; border-radius: 25px;">
+      <li class="results-li">
         <a href="${resultsArray[i].url}" target="_blank">${resultsArray[i].fullName}</a>
         <p>${resultsArray[i].description}</p>
         ${currentAddress}
@@ -101,7 +101,7 @@ function displayAlert(responseJson) {
   if (alertArray.length == 0) {
 //    console.log('No Alerts');
     $('#alert-list').append(`
-      <p>No Weather Alerts</p>
+      <li>No Weather Alerts</li>
     `)
   } else { 
     for (let i = 0; i < alertArray.length; i++){
@@ -111,9 +111,11 @@ function displayAlert(responseJson) {
       }
       
       $('#alert-list').append(`
-        <p>${alertArray[i].properties.headline}</p>
-        <p>${alertArray[i].properties.description}</p>
-        <p>${instruction}</p>
+        <li class="active-alert">
+          <p>${alertArray[i].properties.headline}</p>
+          <p>${alertArray[i].properties.description}</p>
+          <p>${instruction}</p>
+        </li>  
       `)
 //      console.log(responseJson.features[i].properties.headline);
     }
@@ -128,7 +130,7 @@ function displayForecast(responseJson) {
 
   for (let i = 0; i < periodsArray.length; i++){
     $('#forecast-list').append(`
-      <li style="background-color: #DFD2B9; padding: 1px 1px 1px 10px; border-radius: 25px;">
+      <li class="results-forecast">
         <h4>${periodsArray[i].name}: ${periodsArray[i].temperature} ${periodsArray[i].temperatureUnit}</h4>
         <p>${periodsArray[i].detailedForecast}</p>
       </li>

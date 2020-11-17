@@ -4,34 +4,37 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>National Parks Services park finder</title>
+    <title>US National Parks Weather Forecaster</title>
     <link rel="shortcut icon" href="#">
     <link rel="stylesheet" href="index.css">
 </head>
 <body>
-  <header>
-    <h1>US National Parks</h1>
+  <header class="wide-group">
+    <div class="wide-item double-wide-item">
+    <h1>US National Parks Weather Forecaster</h1>
     <ul>
       <li>Use this app to find one or more national parks by state.</li>
       <li>Then use the results to get the current weather forecast.</li>
-    </ul>    
-    <div class="group">
+    </ul>
+    </div>  
+    <div class="group wide-item">
     <form id="js-form">
       <div class="item">
-      <label for="js-search-term">Search Term</label>
-      <input type="text" name="search-term" id="js-search-term" required>
+        <label for="js-search-term">Search Term</label>
+        <input type="text" name="search-term" id="js-search-term" required>
       </div>
       <div class="item">
-      <label for="js-max-results">Maximum Results</label>
-      <input type="number" name="limit" id="js-max-results" min="1" max="50" value="10">
+        <label for="js-max-results">Maximum Results</label>
+        <input type="number" name="limit" id="js-max-results" min="1" max="50" value="10">
       </div>
       <div class="item">
-      <input type="submit" value="Go!">
+        <input type="submit" class="button" value="Go!">
       </div>
     </form>
-    </div>
+    
 
     <p id="js-error-message" class="error-message"></p>
+  </div>
   </header>
   <main class="container">
         <section id="results" class="hidden">
@@ -42,7 +45,7 @@
 
         <section id="forecast" class="hidden">
           <form id="forecast-toggle">
-            <button type="button" class="toggle">Review Your Last Search</button>
+            <button type="button" class="button toggle">Review Your Last Search</button>
           </form>
           
           <ul id="alert-list">

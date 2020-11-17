@@ -74,7 +74,7 @@ function displayResults(responseJson) {
       }
     }
     $('#results-list').append(`
-      <li style="background-color: #DFD2B9;">
+      <li style="background-color: #DFD2B9; border-radius: 25px;">
         <a href="${resultsArray[i].url}" target="_blank">${resultsArray[i].fullName}</a>
         <p>${resultsArray[i].description}</p>
         ${currentAddress}
@@ -128,10 +128,10 @@ function displayForecast(responseJson) {
 
   for (let i = 0; i < periodsArray.length; i++){
     $('#forecast-list').append(`
-      <div style="background-color: #DFD2B9; padding: 1px;">
+      <li style="background-color: #DFD2B9; padding: 1px 1px 1px 10px; border-radius: 25px;">
         <h4>${periodsArray[i].name}: ${periodsArray[i].temperature} ${periodsArray[i].temperatureUnit}</h4>
         <p>${periodsArray[i].detailedForecast}</p>
-      </div>
+      </li>
       <br>
     `)    
   }

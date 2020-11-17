@@ -9,38 +9,54 @@
     <link rel="stylesheet" href="index.css">
 </head>
 <body>
-    <div class="container">
-        <h1>US National Parks Services park finder</h1>
+  <header>
+    <h1>US National Parks</h1>
+    <ul>
+      <li>Use this app to find one or more national parks by state.</li>
+      <li>Then use the results to get the current weather forecast.</li>
+    </ul>    
+    <div class="group">
+    <form id="js-form">
+      <div class="item">
+      <label for="js-search-term">Search Term</label>
+      <input type="text" name="search-term" id="js-search-term" required>
+      </div>
+      <div class="item">
+      <label for="js-max-results">Maximum Results</label>
+      <input type="number" name="limit" id="js-max-results" min="1" max="50" value="10">
+      </div>
+      <div class="item">
+      <input type="submit" value="Go!">
+      </div>
+    </form>
+    </div>
 
-        <form id="js-form">
-            <label for="js-search-term">Search term</label>
-            <input type="text" name="search-term" id="js-search-term" required>
-
-            <label for="js-max-results">Maximum results to return</label>
-            <input type="number" name="limit" id="js-max-results" min="1" max="50" value="10">
-
-            <input type="submit" value="Go!">
-        </form>
-
-        <p id="js-error-message" class="error-message"></p>
+    <p id="js-error-message" class="error-message"></p>
+  </header>
+  <main class="container">
         <section id="results" class="hidden">
-          <h2>Search results</h2>
+          <h2>Search results</h2> 
           <ul id="results-list">
           </ul>
         </section>
+
         <section id="forecast" class="hidden">
           <form id="forecast-toggle">
             <button type="button" class="toggle">Review Your Last Search</button>
           </form>
+          
           <ul id="alert-list">
           </ul>
+          
           <h2>Forecast:</h2>
+          
           <h3 class="forecast-name"></h3>
+          
           <ul id="forecast-list">
           </ul>            
         </section>
-    </div>
-    <script src="https://code.jquery.com/jquery-3.3.1.js" integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60=" crossorigin="anonymous"></script>
-    <script src="index.js"></script>
+  </main>
+  <script src="https://code.jquery.com/jquery-3.3.1.js" integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60=" crossorigin="anonymous"></script>
+  <script src="index.js"></script>
 </body>
 </html>

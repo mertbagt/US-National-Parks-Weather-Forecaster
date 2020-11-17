@@ -74,15 +74,22 @@ function displayResults(responseJson) {
       }
     }
     $('#results-list').append(`
-      <li>
+      <li style="background-color: #DFD2B9;">
         <a href="${resultsArray[i].url}" target="_blank">${resultsArray[i].fullName}</a>
         <p>${resultsArray[i].description}</p>
         ${currentAddress}
-      </li> 
+      </li>
+      <br>
     `)
   }
 
   $('#results').removeClass('hidden');
+}
+
+function displayForecastName() {
+  $("h3.forecast-name").replaceWith(`
+    <h3 class="forecast-name">${chosenParkName}</h3>
+  `);
 }
 
 function displayAlert(responseJson) {
@@ -121,8 +128,10 @@ function displayForecast(responseJson) {
 
   for (let i = 0; i < periodsArray.length; i++){
     $('#forecast-list').append(`
-      <p>${periodsArray[i].name} ${periodsArray[i].temperature} ${periodsArray[i].temperatureUnit}</p>
-      <p>${periodsArray[i].detailedForecast}</p>
+      <div style="background-color: #DFD2B9; padding: 1px;">
+        <h4>${periodsArray[i].name}: ${periodsArray[i].temperature} ${periodsArray[i].temperatureUnit}</h4>
+        <p>${periodsArray[i].detailedForecast}</p>
+      </div>
       <br>
     `)    
   }
@@ -162,6 +171,9 @@ function getNWSgridpoints(latitude, longitude) {
   var myHeaders = new Headers();
   myHeaders.append("Accept", "application/geo+json");
 //  myHeaders.append("User-Agent", userAgent);
+//  use of header field "User-Agent" requested but not required by National Weather Service
+//     -allows them to contact if your app gets blocked for security reasons
+//  use of "User-Agent" causing errors on iOS phones/tablets and/or Safari browser 
 
   var requestOptions = {
     method: 'GET',
@@ -189,6 +201,9 @@ function getForecast(responseJson) {
   var myHeaders = new Headers();
   myHeaders.append("Accept", "application/geo+json");
 //  myHeaders.append("User-Agent", userAgent);
+//  use of header field "User-Agent" requested but not required by National Weather Service
+//     -allows them to contact if your app gets blocked for security reasons
+//  use of "User-Agent" causing errors on iOS phones/tablets and/or Safari browser 
 
   var requestOptions = {
     method: 'GET',
@@ -249,7 +264,7 @@ function watchResults() {
     $('#js-error-message').empty();
 
     chosenPark = this.id;
-    chosenParkName = resultsArray[chosenPark].addresses[0].line1;
+    chosenParkName = resultsArray[chosenPark].fullName;
     lat = resultsArray[chosenPark].latitude;
     long = resultsArray[chosenPark].longitude;
 
@@ -259,11 +274,7 @@ function watchResults() {
     console.log('Latitude: ' + lat);
     console.log('Longitude: ' + long);
 
-// <h2 class="forecast-name">Forecast for ${chosenParkName}</h2>
-
-    $("h3.forecast-name").replaceWith(`
-      <h3 class="forecast-name">${chosenParkName}</h3>
-    `);
+    displayForecastName();
 
     $('#results').addClass('hidden');
     $('#forecast').removeClass('hidden');

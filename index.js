@@ -15,7 +15,6 @@ var lat = 0;
 var long = 0;
 var forecast = '';
 var alerts = '';
-// var state = '';
 
 /******************
 formatting function 
@@ -33,11 +32,9 @@ display functions
 
 function displayResults(responseJson) {
   resultsArray = responseJson.data;
-
   $('#results-list').empty();
   let currentAddress = '';
   
-  console.log('Length ' + resultsArray.length);
   if (resultsArray.length == 0) {
     $('#results-list').append(`
       <li>
@@ -56,7 +53,7 @@ function displayResults(responseJson) {
               ${resultsArray[i].addresses[j].city}&#44;&nbsp;${resultsArray[i].addresses[j].stateCode}&nbsp;${responseJson.data[i].addresses[j].postalCode}
             </p>
             <form id="result-form">
-              <button type="button" id="${i}" class="btn-click-action" value="btn${i}">Get Forecast</button>
+              <button type="button" id="${i}" class="btn-click-action button" value="btn${i}">Get Forecast</button>
             </form>
           `;
         } else {
@@ -94,18 +91,16 @@ function displayForecastName() {
 
 function displayAlert(responseJson) {
   alertArray = responseJson.features  // .properties.headline/description/instruction
-//  console.log('Headline: ' + alertArray.properties.headline);
-  console.log(responseJson);
-
   $('#alert-list').empty();
+
   if (alertArray.length == 0) {
-//    console.log('No Alerts');
     $('#alert-list').append(`
       <li>No Weather Alerts</li>
     `)
   } else { 
     for (let i = 0; i < alertArray.length; i++){
       let instruction = alertArray[i].properties.instruction
+      
       if (instruction == null) {
         instruction = '';
       }
@@ -117,15 +112,12 @@ function displayAlert(responseJson) {
           <p>${instruction}</p>
         </li>  
       `)
-//      console.log(responseJson.features[i].properties.headline);
     }
   } 
 }
 
 function displayForecast(responseJson) {
-//  console.log(responseJson.properties.units);
   periodsArray = responseJson.properties.periods;
-//  console.log(periodsArray.length);
   $('#forecast-list').empty();
 
   for (let i = 0; i < periodsArray.length; i++){
@@ -140,9 +132,8 @@ function displayForecast(responseJson) {
 }
 
 /*************************************
-functions that interface with the apis 
+functions that interface with the APIs 
 *************************************/ 
-
 
 function getNPS(query, maxResults) {
   const params = {
@@ -150,6 +141,7 @@ function getNPS(query, maxResults) {
     q: query,
     limit: maxResults
   };
+
   const queryString = formatQueryParams(params)
   const url = npsURL + '?' + queryString;
 
@@ -184,7 +176,6 @@ function getNWSgridpoints(latitude, longitude) {
   };
   
   const url = nwsURL + latitude + "%2C" + longitude;
-  console.log(url);
 
   fetch(url, requestOptions)
     .then(response => {
@@ -213,9 +204,7 @@ function getForecast(responseJson) {
     redirect: 'follow'
   };
 
-//  state = responseJson.properties.relativeLocation.properties.state;
-  alerts = alertURL + '?point=' + lat + "%2C" + long;
-  
+  alerts = alertURL + '?point=' + lat + "%2C" + long;  
   forecast = responseJson.properties.forecast;
 
   fetch(alerts, requestOptions)
@@ -270,14 +259,7 @@ function watchResults() {
     lat = resultsArray[chosenPark].latitude;
     long = resultsArray[chosenPark].longitude;
 
-    console.log('Chosen element: ' + chosenPark);
-    console.log(chosenParkName);
-    console.log(resultsArray[chosenPark]);
-    console.log('Latitude: ' + lat);
-    console.log('Longitude: ' + long);
-
     displayForecastName();
-
     $('#results').addClass('hidden');
     $('#forecast').removeClass('hidden');
     getNWSgridpoints(lat, long);
@@ -286,7 +268,6 @@ function watchResults() {
 
 function watchToggle() {
   $('#forecast-toggle').on("click", ".toggle", function(event) {
-    console.log('toggle button');
     $('#results').removeClass('hidden');
     $('#forecast').addClass('hidden');
   });  
@@ -303,6 +284,3 @@ function main() {
 }
 
 $(main);
-
-// Display spinner/loading.gif while waiting for results?
-// https://loading.io/

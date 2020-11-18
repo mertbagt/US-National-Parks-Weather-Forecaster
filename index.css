@@ -2,6 +2,8 @@
   box-sizing: border-box;
 }
 
+/* major elements */
+
 html, body {
   overflow-x: hidden;
 }
@@ -10,9 +12,10 @@ html {
   margin: -10px;
 }
 
-body {
+body, main {
   font-family: 'Roboto', sans-serif;
   background-color: #C6AE80;
+  font-size: 16px;
 }
 
 header, main {
@@ -30,9 +33,7 @@ header ul {
 }
 
 main {
-  /*  max-width: 600px; */
   margin: 0 auto;
-  background-color: #C6AE80;
 }
 
 h1 {
@@ -53,6 +54,8 @@ li {
   padding: 10px;
 }
 
+/* buttons */
+
 .button {
   background-color: #5BC0EB;
   border: 1px solid black;
@@ -70,6 +73,8 @@ button:hover {
   cursor: pointer;
 }
 
+/* classes */
+
 .group {
   display: flex;
   flex-direction: column;
@@ -80,8 +85,13 @@ button:hover {
   padding: 5px 0 0 0;
 }
 
-.error-message, .active-alert {
+.error-message {
   color: red;
+}
+
+.active-alert {
+  color: darkred;
+  font-weight: bold;
 }
 
 .hidden {
@@ -96,6 +106,8 @@ button:hover {
 .results-forecast {
   padding: 1px 1px 1px 10px;
 }
+
+/* media responsiveness */
 
 @media all and (min-width: 600px) {
   .wide-group {

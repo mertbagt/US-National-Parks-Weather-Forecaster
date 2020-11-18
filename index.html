@@ -10,54 +10,53 @@
 </head>
 <body>
   <header class="wide-group">
+
     <div class="wide-item double-wide-item">
-    <h1>US National Parks Weather Forecaster</h1>
-    <ul>
-      <li>Use this app to find one or more national parks by state.</li>
-      <li>Then use the results to get the current weather forecast.</li>
-    </ul>
-    </div>  
+      <h1>US National Parks Weather Forecaster</h1>
+      <ul>
+        <li>Use this app to find one or more national parks by state.</li>
+        <li>Then use the results to get the current weather forecast.</li>
+      </ul>
+    </div>
+
     <div class="group wide-item">
-    <form id="js-form">
-      <div class="item">
-        <label for="js-search-term">Search Term</label>
-        <input type="text" name="search-term" id="js-search-term" required>
-      </div>
-      <div class="item">
-        <label for="js-max-results">Maximum Results</label>
-        <input type="number" name="limit" id="js-max-results" min="1" max="50" value="10">
-      </div>
-      <div class="item">
-        <input type="submit" class="button" value="Go!">
-      </div>
-    </form>
-    
+      <form id="js-form">
+        <div class="item">
+          <label for="js-search-term">Search Term</label>
+          <input type="text" name="search-term" id="js-search-term" required>
+        </div>
+        <div class="item">
+          <label for="js-max-results">Maximum Results</label>
+          <input type="number" name="limit" id="js-max-results" min="1" max="50" value="10">
+        </div>
+        <div class="item">
+          <input type="submit" class="button" value="Go!">
+        </div>
+      </form>
+      <p id="js-error-message" class="error-message"></p>
+    </div>
 
-    <p id="js-error-message" class="error-message"></p>
-  </div>
   </header>
-  <main class="container">
-        <section id="results" class="hidden">
-          <h2>Search results</h2> 
-          <ul id="results-list">
-          </ul>
-        </section>
+  <main>
 
-        <section id="forecast" class="hidden">
-          <form id="forecast-toggle">
-            <button type="button" class="button toggle">Review Your Last Search</button>
-          </form>
-          
-          <ul id="alert-list">
-          </ul>
-          
-          <h2>Forecast:</h2>
-          
-          <h3 class="forecast-name"></h3>
-          
-          <ul id="forecast-list">
-          </ul>            
-        </section>
+    <section id="results" class="hidden">
+      <h2>Search results</h2> 
+      <ul id="results-list">
+      </ul>
+    </section>
+
+    <section id="forecast" class="hidden">
+      <form id="forecast-toggle">
+        <button type="button" class="button toggle">Review Your Last Search</button>
+      </form>
+      <ul id="alert-list">
+      </ul>
+      <h2>Forecast:</h2>
+      <h3 class="forecast-name"></h3>
+      <ul id="forecast-list">
+      </ul>            
+    </section>
+    
   </main>
   <script src="https://code.jquery.com/jquery-3.3.1.js" integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60=" crossorigin="anonymous"></script>
   <script src="index.js"></script>

@@ -69,6 +69,10 @@ button, input[type="text"] {
   padding: 5px;
 }
 
+input {
+  font-size: 100%;
+}
+
 button:hover {
   cursor: pointer;
 }

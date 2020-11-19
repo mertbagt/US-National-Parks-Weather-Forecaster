@@ -7,6 +7,7 @@
     <title>US National Parks Weather Forecaster</title>
     <link rel="shortcut icon" href="#">
     <link rel="stylesheet" href="index.css">
+    <link rel="stylesheet" type="text/css" href="loading.css"/>
 </head>
 <body>
   <header class="wide-group">
@@ -19,28 +20,33 @@
       </ul>
     </div>
 
-    <div class="group wide-item">
-      <form id="js-form">
-        <div class="item">
-          <label for="js-search-term">Search Term</label>
-          <input type="text" name="search-term" id="js-search-term" required>
-        </div>
-        <div class="item">
-          <label for="js-max-results">Maximum Results</label>
-          <input type="number" name="limit" id="js-max-results" min="1" max="50" value="10">
-        </div>
-        <div class="item">
-          <input type="submit" class="button" value="Go!">
-        </div>
-      </form>
-      <p id="js-error-message" class="error-message"></p>
-    </div>
+    <form id="js-form" class="group wide-item">
+      <div class="item">
+        <label for="js-search-term">Search Term</label>
+        <input type="text" name="search-term" id="js-search-term" required>
+      </div>
+      <div class="item">  
+        <label for="js-max-results">Maximum Results</label>
+        <input type="number" name="limit" id="js-max-results" min="1" max="50" value="10">
+      </div>
+      <div class="item-2">
+        <label></label> 
+        <input type="submit" class="button" value="Go!">
+      </div>
+    </form>
 
   </header>
   <main>
+    
+    <p id="js-error-message" class="error-message"></p>
 
     <section id="results" class="hidden">
-      <h2>Search results</h2> 
+      <div class="loader-group">
+        <h2 class="loader-item-1">Search results</h2>
+        <div id="results-spinner" class="loader-item-2 hidden">
+          <div class="ld ld-hourglass ld-spin"></div>
+        </div>
+      </div>  
       <ul id="results-list">
       </ul>
     </section>
@@ -49,10 +55,16 @@
       <form id="forecast-toggle">
         <button type="button" class="button toggle">Review Your Last Search</button>
       </form>
+      <div id="alerts-spinner" class="loader-group">
+        <span class="loader-item-1">
+          Checking Alerts:
+        </span>  
+        <span class="loader-item-2">  
+          <div class="ld ld-hourglass ld-spin"></div>
+        </span>
+      </div>    
       <ul id="alert-list">
       </ul>
-      <h2>Forecast:</h2>
-      <h3 class="forecast-name"></h3>
       <ul id="forecast-list">
       </ul>            
     </section>

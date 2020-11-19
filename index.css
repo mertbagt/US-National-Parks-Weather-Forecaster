@@ -6,21 +6,21 @@
 
 html, body {
   overflow-x: hidden;
+  width: auto;
 }
 
 html {
-  margin: -10px;
+  margin: -15px;
 }
 
-body, main {
+body {
   font-family: 'Roboto', sans-serif;
   background-color: #C6AE80;
   font-size: 16px;
 }
 
 header, main {
-  padding: 10px;
-  width: 100%;
+  padding: 15px;
 }
 
 header {
@@ -32,16 +32,16 @@ header ul {
   text-align: center;
 }
 
-main {
-  margin: 0 auto;
-}
-
-h1 {
+h1, h3 {
   text-align: center;
 }
 
+h2 {
+  padding: 10px;
+}
+
 form {
-  padding: 10px 0 0 0;
+  padding: 10px 0 10px 0;
 }
 
 ul {
@@ -54,7 +54,7 @@ li {
   padding: 10px;
 }
 
-/* buttons */
+/* buttons and labels */
 
 .button {
   background-color: #5BC0EB;
@@ -70,18 +70,28 @@ button, input[type="text"] {
 }
 
 input {
-  font-size: 17px;
+  font-size: 16px;
+  float: left;
+}
+
+label {
+  padding: 5px 0 0 0;
+  float: left;
+  clear: left;
+  width: 140px;
+  text-align: left;
 }
 
 button:hover {
   cursor: pointer;
 }
 
-/* classes */
-
+/* groups */
+ 
 .group {
   display: flex;
   flex-direction: column;
+  justify-content: space-between;
 }
 
 .item {
@@ -89,13 +99,46 @@ button:hover {
   padding: 5px 0 0 0;
 }
 
-.error-message {
-  color: red;
+.item-2 {
+  flex: 1;
+  padding: 10px 0 0 0;
 }
 
-.active-alert {
+.loader-group {
+  display: flex;
+  flex-direction: row;
+  height: 50px;
+}
+
+.loader-item-1 {
+  flex: 1;
+  margin: 0;
+  padding: 1px 0 0 0;
+}
+
+.loader-item-2 {
+  flex: 1;
+  margin: 0;
+  padding: 5px 0 0 0;
+}
+
+/*
+.error-message {
+  color: red;
+  height: 28px;
+}
+*/
+
+/* classes */
+
+.active-alert, .error-message {
   color: darkred;
   font-weight: bold;
+}
+
+.centered {
+  margin: 0 75px;
+  width: 50%;
 }
 
 .hidden {

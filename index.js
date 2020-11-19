@@ -1,20 +1,17 @@
 'use strict';
 
-const npsApiKey = 'SFrRDgbJqK0UmIHF3SBlVnfVqUptaERhhHhLBIzn'; 
-const npsURL = 'https://developer.nps.gov/api/v1/parks';
-const userAgent = '(https://mertbagt.github.io/nps-api-search/, mertbagt@gmail.com)';
-const nwsURL = 'https://api.weather.gov/points/';
-const alertURL = 'https://api.weather.gov/alerts/active';
-
-var resultsArray = [];
-var periodsArray = [];
-var alertArray = [];
-var chosenPark = 0;
-var chosenParkName = '';
-var lat = 0;
-var long = 0;
-var forecast = '';
-var alerts = '';
+const ParkForecaster = {
+  npsApiKey: 'SFrRDgbJqK0UmIHF3SBlVnfVqUptaERhhHhLBIzn', 
+  npsURL: 'https://developer.nps.gov/api/v1/parks',  
+  userAgent: '(https://mertbagt.github.io/nps-api-search/, mertbagt@gmail.com)',
+  nwsURL: 'https://api.weather.gov/points/',
+  alertURL: 'https://api.weather.gov/alerts/active',
+  resultsArray: [],
+  chosenParkName: '',
+  lat: 0,
+  long: 0,
+  currentAddress: ''
+}
 
 /******************
 formatting function 
@@ -26,72 +23,76 @@ function formatQueryParams(params) {
   return queryItems.join('&');
 }
 
+function formatAddress(element, i) {
+  if (element.type == 'Physical') {
+    if (element.line2 === "") {
+      ParkForecaster.currentAddress = `
+        <p>
+          ${element.line1}<br>
+          ${element.city}&#44;&nbsp;${element.stateCode}&nbsp;${element.postalCode}
+        </p>
+        <form id="result-form">
+          <button type="button" id="${i}" class="btn-click-action button" value="btn${i}">Get Forecast</button>
+        </form>
+      `;
+    } else {
+      ParkForecaster.currentAddress = `
+        <p>
+          ${element.line1}<br>
+          ${element.line2}<br>
+          ${element.city}&#44;&nbsp;${element.stateCode}&nbsp;${element.postalCode}
+        </p>
+        <form id="result-form">
+          <button type="button" id="${i}" class="btn-click-action button" value="btn${i}">Get Forecast</button>
+        </form>
+      `;
+    }
+  }
+}
+
+function formatForecast(element) {
+  $('#forecast-list').append(`
+    <li class="results-forecast">
+      <h4>${element.name}: ${element.temperature} ${element.temperatureUnit}</h4>
+      <p>${element.detailedForecast}</p>
+    </li>
+    <br>
+  `)
+}
+
 /****************
 display functions 
 ****************/ 
 
 function displayResults(responseJson) {
-  resultsArray = responseJson.data;
+  ParkForecaster.resultsArray = responseJson.data;
   $('#results-list').empty();
-  let currentAddress = '';
+  ParkForecaster.currentAddress = '';
   
-  if (resultsArray.length == 0) {
+  if (ParkForecaster.resultsArray.length == 0) {
     $('#results-list').append(`
       <li>
         <p>No results found: try entering a state or a major city in the US</p>
       </li> 
     `)
   }
-
-  for (let i = 0; i < resultsArray.length; i++){
-    for (let j = 0; j < resultsArray[i].addresses.length; j++) {
-      if (resultsArray[i].addresses[j].type == 'Physical') {
-        if (resultsArray[i].addresses[j].line2 === "") {
-          currentAddress = `
-            <p>
-              ${resultsArray[i].addresses[j].line1}<br>
-              ${resultsArray[i].addresses[j].city}&#44;&nbsp;${resultsArray[i].addresses[j].stateCode}&nbsp;${responseJson.data[i].addresses[j].postalCode}
-            </p>
-            <form id="result-form">
-              <button type="button" id="${i}" class="btn-click-action button" value="btn${i}">Get Forecast</button>
-            </form>
-          `;
-        } else {
-        currentAddress = `
-          <p>
-            ${resultsArray[i].addresses[j].line1}<br>
-            ${resultsArray[i].addresses[j].line2}<br>
-            ${resultsArray[i].addresses[j].city}&#44;&nbsp;${resultsArray[i].addresses[j].stateCode}&nbsp;${responseJson.data[i].addresses[j].postalCode}
-          </p>
-          <form id="result-form">
-              <button type="button" id="${i}" class="btn-click-action button" value="btn${i}">Get Forecast</button>
-          </form>
-        `;
-        }
-      }
-    }
+    
+  for (let i = 0; i < ParkForecaster.resultsArray.length; i++){
+    ParkForecaster.resultsArray[i].addresses.forEach(element => formatAddress(element, i));
     $('#results-list').append(`
       <li class="results-li">
-        <a href="${resultsArray[i].url}" target="_blank">${resultsArray[i].fullName}</a>
-        <p>${resultsArray[i].description}</p>
-        ${currentAddress}
+        <a href="${ParkForecaster.resultsArray[i].url}" target="_blank">${ParkForecaster.resultsArray[i].fullName}</a>
+        <p>${ParkForecaster.resultsArray[i].description}</p>
+        ${ParkForecaster.currentAddress}
       </li>
       <br>
-    `)
+    `)  
   }
-
-  $('#results').removeClass('hidden');
-}
-
-function displayForecastName() {
-  $("h3.forecast-name").replaceWith(`
-    <h3 class="forecast-name">${chosenParkName}</h3>
-  `);
+  $('#results-spinner').addClass('hidden');
 }
 
 function displayAlert(responseJson) {
-  alertArray = responseJson.features  // .properties.headline/description/instruction
-  $('#alert-list').empty();
+  let alertArray = responseJson.features  // .properties.headline/description/instruction
 
   if (alertArray.length == 0) {
     $('#alert-list').append(`
@@ -113,123 +114,137 @@ function displayAlert(responseJson) {
         </li>  
       `)
     }
-  } 
+  }
+  $('#alerts-spinner').addClass('hidden');
+}
+
+function displayForecastName() {
+  $('#forecast-list').append(`
+      <div class="loader-group">
+        <h2 class="loader-item-1">Forecast:</h2>
+        <div id="forecast-spinner" class="loader-item-2">
+          <div class="ld ld-hourglass ld-spin"></div>
+        </div>
+      </div>
+      <h3>${ParkForecaster.chosenParkName}</h3>
+  `);
+}
+
+function displayNull(forecastURL) {
+  if (forecastURL == null) {
+    $('#forecast-list').append(`
+      <li class="results-forecast">
+        <h4>Forecast not available for this State/Area at this time:</h4>
+        <h4>Please try again later.</h4>
+      </li>
+      <br>
+    `)
+  }
 }
 
 function displayForecast(responseJson) {
-  periodsArray = responseJson.properties.periods;
-  $('#forecast-list').empty();
+  let periodsArray = responseJson.properties.periods;
 
-  for (let i = 0; i < periodsArray.length; i++){
-    $('#forecast-list').append(`
-      <li class="results-forecast">
-        <h4>${periodsArray[i].name}: ${periodsArray[i].temperature} ${periodsArray[i].temperatureUnit}</h4>
-        <p>${periodsArray[i].detailedForecast}</p>
-      </li>
-      <br>
-    `)    
+  periodsArray.forEach(element => formatForecast(element));
+  $('#forecast-spinner').addClass('hidden');
+}
+
+function hideSpinners(nextFunction) {
+  if (nextFunction == displayResults) {
+    $('#results-spinner').addClass('hidden');
   }
+  if (nextFunction == displayAlert) {
+    $('#alerts-spinner').addClass('hidden');
+  }  
+  if (nextFunction == displayForecast) {
+    $('#forecast-spinner').addClass('hidden');
+  } 
 }
 
 /*************************************
 functions that interface with the APIs 
 *************************************/ 
+function fetchThings(url, options, nextFunction, endpoint) {
+  fetch(url, options)
+    .then(response => {
+      if (response.ok) {
+        return response.json();
+      }
+      throw new Error(response.statusText);
+    })
+    .then(responseJson => nextFunction(responseJson))
+    .catch(err => {
+      alert(err.message);
+      if (err.message == '') {
+        $('#js-error-message').append(`Network Error.  `);
+      } else {
+        $('#js-error-message').append(`Something went wrong with ${endpoint}: ${err.message}.  `);        
+      }
+      hideSpinners(nextFunction);
+    }); 
+}
 
 function getNPS(query, maxResults) {
   const params = {
-    api_key: npsApiKey,
+    api_key: ParkForecaster.npsApiKey,
     q: query,
     limit: maxResults
   };
 
   const queryString = formatQueryParams(params)
-  const url = npsURL + '?' + queryString;
+  const url = ParkForecaster.npsURL + '?' + queryString;
 
-  fetch(url)
-    .then(response => {
-      if (response.ok) {
-        return response.json();
-      }
-      throw new Error(response.statusText);
-    })
-    .then(responseJson => displayResults(responseJson))
-    .catch(err => {
-      $('#js-error-message').text(`Something went wrong: ${err.message}`);
-    });
+  let requestOptions = {
+    method: 'GET',
+    redirect: 'follow'
+  };
+
+  fetchThings(url, requestOptions, displayResults, 'Park Finder');
 }
 
 /* National Park Service latitude/longitude data needs to be translated into gridpoints before it
 can be resubmited to the National Weather Service to receive the forecast */
 
-function getNWSgridpoints(latitude, longitude) {
-  var myHeaders = new Headers();
+function getNWSGridPoints() {
+  let myHeaders = new Headers();
   myHeaders.append("Accept", "application/geo+json");
-//  myHeaders.append("User-Agent", userAgent);
+//  myHeaders.append("User-Agent", ParkForecaster.userAgent);
 //  use of header field "User-Agent" requested but not required by National Weather Service
 //     -allows them to contact if your app gets blocked for security reasons
 //  use of "User-Agent" causing errors on iOS phones/tablets and/or Safari browser 
 
-  var requestOptions = {
+  let requestOptions = {
     method: 'GET',
     headers: myHeaders,
     redirect: 'follow'
   };
   
-  const url = nwsURL + latitude + "%2C" + longitude;
+  const url = ParkForecaster.nwsURL + ParkForecaster.lat + "%2C" + ParkForecaster.long;
 
-  fetch(url, requestOptions)
-    .then(response => {
-      if (response.ok) {
-        return response.json();
-      }
-      throw new Error(response.statusText);
-    })
-    .then(responseJson => getForecast(responseJson))
-    .catch(err => {
-      $('#js-error-message').text(`Something went wrong: ${err.message}`);
-    });      
+  fetchThings(url, requestOptions, getForecast, 'Grid Points');
 }
 
 function getForecast(responseJson) {
-  var myHeaders = new Headers();
+  let myHeaders = new Headers();
   myHeaders.append("Accept", "application/geo+json");
-//  myHeaders.append("User-Agent", userAgent);
+//  myHeaders.append("User-Agent", ParkForecaster.userAgent);
 //  use of header field "User-Agent" requested but not required by National Weather Service
 //     -allows them to contact if your app gets blocked for security reasons
 //  use of "User-Agent" causing errors on iOS phones/tablets and/or Safari browser 
 
-  var requestOptions = {
+  let requestOptions = {
     method: 'GET',
     headers: myHeaders,
     redirect: 'follow'
   };
 
-  alerts = alertURL + '?point=' + lat + "%2C" + long;  
-  forecast = responseJson.properties.forecast;
+  let alertsURL = ParkForecaster.alertURL + '?point=' + ParkForecaster.lat + "%2C" + ParkForecaster.long;  
+  let forecastURL = responseJson.properties.forecast;
+  
+  displayNull(forecastURL);
 
-  fetch(alerts, requestOptions)
-    .then(response => {
-      if (response.ok) {
-        return response.json();
-      }
-      throw new Error(response.statusText);
-    })
-    .then(responseJson => displayAlert(responseJson))
-    .catch(err => {
-      $('#js-error-message').text(`Something went wrong: ${err.message}`);
-    }); 
-
-  fetch(forecast, requestOptions)
-    .then(response => {
-      if (response.ok) {
-        return response.json();
-      }
-      throw new Error(response.statusText);
-    })
-    .then(responseJson => displayForecast(responseJson))
-    .catch(err => {
-      $('#js-error-message').text(`Something went wrong: ${err.message}`);
-    });
+  fetchThings(alertsURL, requestOptions, displayAlert, 'Weather Alerts');
+  fetchThings(forecastURL, requestOptions, displayForecast, 'Forecast');
 }
 
 /***************************************************************
@@ -242,6 +257,7 @@ function watchForm() {
     const searchTerm = $('#js-search-term').val();
     const maxResults = $('#js-max-results').val();
     $('#results').removeClass('hidden');
+    $('#results-spinner').removeClass('hidden');
     $('#forecast').addClass('hidden');
     $('#js-error-message').empty();
     getNPS(searchTerm, maxResults);
@@ -254,15 +270,16 @@ function watchResults() {
     $('#alert-list').empty();
     $('#js-error-message').empty();
 
-    chosenPark = this.id;
-    chosenParkName = resultsArray[chosenPark].fullName;
-    lat = resultsArray[chosenPark].latitude;
-    long = resultsArray[chosenPark].longitude;
-
+    let chosenPark = this.id;
+    ParkForecaster.chosenParkName = ParkForecaster.resultsArray[chosenPark].fullName;
+    ParkForecaster.lat = ParkForecaster.resultsArray[chosenPark].latitude;
+    ParkForecaster.long = ParkForecaster.resultsArray[chosenPark].longitude;
+    
     displayForecastName();
     $('#results').addClass('hidden');
     $('#forecast').removeClass('hidden');
-    getNWSgridpoints(lat, long);
+    $('#alerts-spinner').removeClass('hidden');
+    getNWSGridPoints();
   }); 
 }
 

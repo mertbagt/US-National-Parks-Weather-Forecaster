@@ -132,6 +132,10 @@ button:hover {
   font-weight: bold;
 }
 
+.font-max-results {
+  font-size: 16px;
+}
+
 .hidden {
   display: none;
 }

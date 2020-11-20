@@ -28,20 +28,25 @@ header {
   background-color: #5B6C5D;
 }
 
-header ul {
+header ul, h1, h3, .center {
   text-align: center;
 }
 
-h1, h3 {
-  text-align: center;
-}
-
-h2 {
+h2, li {
   padding: 10px;
+}
+
+h3 {
+  margin: 0;
 }
 
 form {
   padding: 10px 0 10px 0;
+}
+
+select {
+  padding: 0;
+  margin: 3px 0 2px 0;
 }
 
 ul {
@@ -50,11 +55,7 @@ ul {
   margin: 0;
 }
 
-li {
-  padding: 10px;
-}
-
-/* buttons and labels */
+/* inputs and labels */
 
 .button {
   background-color: #5BC0EB;
@@ -65,17 +66,21 @@ li {
   padding: 5px;
 }
 
-button, input[type="text"] {
-  padding: 5px;
-}
-
 input {
   font-size: 16px;
   float: left;
 }
 
-label {
+input[type="text"] {
+  margin: 0;
+  padding: 1px 0 0 0;
+}
+
+label, .item, .loader-item-2 {
   padding: 5px 0 0 0;
+}
+
+label {
   float: left;
   clear: left;
   width: 140px;
@@ -96,7 +101,6 @@ button:hover {
 
 .item {
   flex: 1;
-  padding: 5px 0 0 0;
 }
 
 .item-2 {
@@ -119,26 +123,13 @@ button:hover {
 .loader-item-2 {
   flex: 1;
   margin: 0;
-  padding: 5px 0 0 0;
 }
-
-/*
-.error-message {
-  color: red;
-  height: 28px;
-}
-*/
 
 /* classes */
 
 .active-alert, .error-message {
   color: darkred;
   font-weight: bold;
-}
-
-.centered {
-  margin: 0 75px;
-  width: 50%;
 }
 
 .hidden {
@@ -148,6 +139,7 @@ button:hover {
 .results-li, .results-forecast {
   background-color: #DFD2B9;
   border-radius: 25px;
+  margin: 20px 5px;
 }
 
 .results-forecast {

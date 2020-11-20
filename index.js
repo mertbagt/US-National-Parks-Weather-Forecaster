@@ -13,9 +13,27 @@ const ParkForecaster = {
   currentAddress: ''
 }
 
-/******************
-formatting function 
-******************/ 
+/**************
+setup functions
+**************/ 
+
+function setupMaxResults() {
+  let maxResultsArray = [...Array(50).keys()]
+  maxResultsArray.forEach(element => formatMaxResults(element));
+}
+
+/*******************
+formatting functions
+*******************/ 
+
+function formatMaxResults(element) {
+  let count = element+1
+  if (count == 10) {
+    $('#js-max-results').append($('<option selected></option>').val(count).html(count))
+  } else {
+    $('#js-max-results').append($('<option></option>').val(count).html(count))
+  }
+}
 
 function formatQueryParams(params) {
   const queryItems = Object.keys(params)
@@ -31,9 +49,7 @@ function formatAddress(element, i) {
           ${element.line1}<br>
           ${element.city}&#44;&nbsp;${element.stateCode}&nbsp;${element.postalCode}
         </p>
-        <form id="result-form">
-          <button type="button" id="${i}" class="btn-click-action button" value="btn${i}">Get Forecast</button>
-        </form>
+        <button type="button" id="${i}" class="btn-click-action button" value="btn${i}">Get Forecast</button>
       `;
     } else {
       ParkForecaster.currentAddress = `
@@ -42,12 +58,26 @@ function formatAddress(element, i) {
           ${element.line2}<br>
           ${element.city}&#44;&nbsp;${element.stateCode}&nbsp;${element.postalCode}
         </p>
-        <form id="result-form">
-          <button type="button" id="${i}" class="btn-click-action button" value="btn${i}">Get Forecast</button>
-        </form>
+        <button type="button" id="${i}" class="btn-click-action button" value="btn${i}">Get Forecast</button>
       `;
     }
   }
+}
+
+function formatInstruction(element){
+  let instruction = element.properties.instruction
+      
+  if (instruction == null) {
+    instruction = '';
+  }
+
+  $('#alert-list').append(`
+    <li class="active-alert">
+      <p>${element.properties.headline}</p>
+      <p>${element.properties.description}</p>
+      <p>${instruction}</p>
+    </li>  
+  `)
 }
 
 function formatForecast(element) {
@@ -56,7 +86,6 @@ function formatForecast(element) {
       <h4>${element.name}: ${element.temperature} ${element.temperatureUnit}</h4>
       <p>${element.detailedForecast}</p>
     </li>
-    <br>
   `)
 }
 
@@ -85,7 +114,6 @@ function displayResults(responseJson) {
         <p>${ParkForecaster.resultsArray[i].description}</p>
         ${ParkForecaster.currentAddress}
       </li>
-      <br>
     `)  
   }
   $('#results-spinner').addClass('hidden');
@@ -96,30 +124,16 @@ function displayAlert(responseJson) {
 
   if (alertArray.length == 0) {
     $('#alert-list').append(`
-      <li>No Weather Alerts</li>
+      <li class="center">No Weather Alerts</li>
     `)
   } else { 
-    for (let i = 0; i < alertArray.length; i++){
-      let instruction = alertArray[i].properties.instruction
-      
-      if (instruction == null) {
-        instruction = '';
-      }
-      
-      $('#alert-list').append(`
-        <li class="active-alert">
-          <p>${alertArray[i].properties.headline}</p>
-          <p>${alertArray[i].properties.description}</p>
-          <p>${instruction}</p>
-        </li>  
-      `)
-    }
+    alertArray.forEach(element => formatInstruction(element));
   }
   $('#alerts-spinner').addClass('hidden');
 }
 
 function displayForecastName() {
-  $('#forecast-list').append(`
+  $('#forecast-header').append(`
       <div class="loader-group">
         <h2 class="loader-item-1">Forecast:</h2>
         <div id="forecast-spinner" class="loader-item-2">
@@ -130,16 +144,13 @@ function displayForecastName() {
   `);
 }
 
-function displayNull(forecastURL) {
-  if (forecastURL == null) {
+function displayNull() {
     $('#forecast-list').append(`
       <li class="results-forecast">
         <h4>Forecast not available for this State/Area at this time:</h4>
         <h4>Please try again later.</h4>
       </li>
-      <br>
     `)
-  }
 }
 
 function displayForecast(responseJson) {
@@ -177,6 +188,9 @@ function fetchThings(url, options, nextFunction, endpoint) {
       alert(err.message);
       if (err.message == '') {
         $('#js-error-message').append(`Network Error.  `);
+        if (nextFunction == displayForecast) {
+          displayNull();
+        }
       } else {
         $('#js-error-message').append(`Something went wrong with ${endpoint}: ${err.message}.  `);        
       }
@@ -209,8 +223,10 @@ function getNWSGridPoints() {
   let myHeaders = new Headers();
   myHeaders.append("Accept", "application/geo+json");
 //  myHeaders.append("User-Agent", ParkForecaster.userAgent);
+
 //  use of header field "User-Agent" requested but not required by National Weather Service
 //     -allows them to contact if your app gets blocked for security reasons
+//     -NWS plans to replace with apiKey, but no timeline announced
 //  use of "User-Agent" causing errors on iOS phones/tablets and/or Safari browser 
 
   let requestOptions = {
@@ -228,8 +244,10 @@ function getForecast(responseJson) {
   let myHeaders = new Headers();
   myHeaders.append("Accept", "application/geo+json");
 //  myHeaders.append("User-Agent", ParkForecaster.userAgent);
+
 //  use of header field "User-Agent" requested but not required by National Weather Service
 //     -allows them to contact if your app gets blocked for security reasons
+//     -NWS plans to replace with apiKey, but no timeline announced
 //  use of "User-Agent" causing errors on iOS phones/tablets and/or Safari browser 
 
   let requestOptions = {
@@ -241,7 +259,9 @@ function getForecast(responseJson) {
   let alertsURL = ParkForecaster.alertURL + '?point=' + ParkForecaster.lat + "%2C" + ParkForecaster.long;  
   let forecastURL = responseJson.properties.forecast;
   
-  displayNull(forecastURL);
+  if (forecastURL == null) {
+    displayNull();
+  };
 
   fetchThings(alertsURL, requestOptions, displayAlert, 'Weather Alerts');
   fetchThings(forecastURL, requestOptions, displayForecast, 'Forecast');
@@ -266,6 +286,7 @@ function watchForm() {
 
 function watchResults() {
   $('#results-list').on("click", ".btn-click-action", function(event) {
+    $('#forecast-header').empty();
     $('#forecast-list').empty();
     $('#alert-list').empty();
     $('#js-error-message').empty();
@@ -295,6 +316,7 @@ main function
 ************/
 
 function main() {
+  setupMaxResults();
   watchForm();
   watchResults();
   watchToggle();
